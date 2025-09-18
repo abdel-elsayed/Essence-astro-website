@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+body.page-transition {
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+body.page-transition.is-loaded {
+  opacity: 1;
+}
+
+body.page-transition.is-leaving {
+  opacity: 0;
+}

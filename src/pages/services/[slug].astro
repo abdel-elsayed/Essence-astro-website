@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const items = await getCollection("services");
+  return items.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { title, price, duration, excerpt, image } = entry.data;
+const slug = entry.slug;
+const desc = excerpt ?? `Learn about ${title}`;
+const url = `https://essence-medspa.com/services/${slug}`;
+---
+<BaseLayout title={`${title} | Essence MedSpa`} description={desc}>
+  <Fragment slot="head">
+    <link rel="canonical" href={url} />
+    <meta property="og:title" content={`${title} | Essence MedSpa`} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={url} />
+    <script type="application/ld+json" is:inline>
+      {JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: title,
+        description: desc,
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          price: price,
+          availability: "https://schema.org/InStock"
+        },
+        provider: { "@type": "LocalBusiness", name: "Essence MedSpa" }
+      })}
+    </script>
+  </Fragment>
+
+  <section class="container mx-auto px-4 py-12">
+    <article class="grid gap-8 md:grid-cols-2">
+      {image && <img src={image} alt={title} class="rounded-xl" />}
+      <section>
+        <h1 class="text-3xl font-bold font-display">{title}</h1>
+        {excerpt && <p class="mt-2 text-neutral-600">{excerpt}</p>}
+        <p class="mt-4 text-xl font-medium">${price} · {duration} min</p>
+        <a href="/book" class="mt-6 inline-block rounded-lg bg-brand px-6 py-3 text-white hover:bg-brand-dark transition">Book Now</a>
+        <hr class="my-6" />
+        <div class="prose max-w-none">
+          <Content />
+        </div>
+      </section>
+    </article>
+    <a href="/book" class="md:hidden fixed bottom-4 right-4 rounded-full bg-brand px-5 py-3 text-white shadow-lg">Book</a>
+  </section>
+</BaseLayout>

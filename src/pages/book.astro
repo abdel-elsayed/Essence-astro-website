@@ -1,0 +1,22 @@
+import BaseLayout from "../layouts/BaseLayout.astro";
+const businessId = import.meta.env.PUBLIC_VAGARO_ID; // set in .env
+---
+<BaseLayout
+  title="Book an Appointment | Essence MedSpa"
+  description="Reserve your next Essence MedSpa facial, injectable, or massage online."
+>
+  <section class="container mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold font-display">Book an Appointment</h1>
+    <p class="mt-2 text-neutral-600">Secure your spot with Essence MedSpa.</p>
+    <div class="my-8 min-h-[700px]" data-vagaro-business-id={businessId} data-vagaro-widget="booking" />
+    <script is:inline>
+      if (!document.getElementById("vagaro-widget")) {
+        const s = document.createElement("script");
+        s.id = "vagaro-widget";
+        s.src = "https://www.vagaro.com//path/to/official/widget.js"; // replace with official URL
+        s.async = true;
+        document.body.appendChild(s);
+      }
+    </script>
+  </section>
+</BaseLayout>

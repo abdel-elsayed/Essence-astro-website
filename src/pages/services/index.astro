@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+const services = await getCollection("services");
+const byCat = services.reduce((acc, s) => {
+  const c = s.data.category ?? "Other";
+  (acc[c] ??= []).push(s);
+  return acc;
+}, {} as Record<string, typeof services>);
+---
+<BaseLayout
+  title="Services & Pricing | Essence MedSpa"
+  description="Explore facials, injectables, and body treatments with transparent pricing and durations."
+>
+  <section class="container mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold font-display">Services & Pricing</h1>
+    <p class="mt-2 text-neutral-600">Clear, up-front pricing. Book online in seconds.</p>
+    {Object.entries(byCat).map(([cat, list]) => (
+      <section class="mt-10">
+        <h2 class="text-xl font-semibold">{cat}</h2>
+        <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {list.map(({ data, slug }) => (
+            <a href={`/services/${data.slug ?? slug}`} class="block rounded-2xl border p-6 bg-white hover:shadow-md transition">
+              <h3 class="text-lg font-semibold">{data.title}</h3>
+              {data.excerpt && <p class="mt-1 text-neutral-600">{data.excerpt}</p>}
+              <p class="mt-3 font-medium">From ${data.price} · {data.duration} min</p>
+              <span class="mt-4 inline-block underline">View details</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </section>
+</BaseLayout>
