@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteMeta } from '../data/site';
+
+const canonical = `${siteMeta.siteUrl}/gallery`;
+const images = [
+  {
+    src: 'https://images.unsplash.com/photo-1556229010-aa3f7ff66c05?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Essence Med Spa lobby with seating area'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Treatment bed with warm lighting'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Shelves of curated skincare products'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1611944212129-29977ae1398c?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Calming facial treatment room'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1591017403286-a392ef81b7de?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Massage therapist preparing hot stones'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1522335789204-0863df5d73eb?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Detail of spa retail display'
+  }
+];
+---
+<BaseLayout
+  title="Essence Med Spa Gallery"
+  description="Explore the calming interiors and treatment suites inside Essence Med Spa and Wellness Center in Chicago, Illinois."
+  canonical={canonical}
+  currentPath="/gallery"
+>
+  <section class="bg-white pb-14 pt-16">
+    <div class="container space-y-6">
+      <p class="text-xs uppercase tracking-[0.4em] text-brand/80">Inside the Studio</p>
+      <h1 class="font-display text-4xl text-neutral-900">A calming retreat to recharge mind and skin.</h1>
+      <p class="max-w-2xl text-neutral-600">
+        Step into luminous treatment suites, cozy lounges, and curated retail moments designed to make every visit feel like a mini escape in Chicago’s Edgebrook neighborhood.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-neutral-50 pb-16">
+    <div class="container">
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {images.map((image) => (
+          <figure class="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
+            <img src={image.src} alt={image.alt} class="h-64 w-full object-cover" loading="lazy" />
+            <figcaption class="p-4 text-sm text-neutral-600">{image.alt}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

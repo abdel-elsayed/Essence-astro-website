@@ -1,22 +1,86 @@
-import BaseLayout from "../layouts/BaseLayout.astro";
-const businessId = import.meta.env.PUBLIC_VAGARO_ID; // set in .env
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { business, siteMeta } from '../data/site';
+
+const businessId = import.meta.env.PUBLIC_VAGARO_ID;
+const canonical = `${siteMeta.siteUrl}/book`;
 ---
 <BaseLayout
-  title="Book an Appointment | Essence MedSpa"
-  description="Reserve your next Essence MedSpa facial, injectable, or massage online."
+  title="Book an Appointment | Essence Med Spa and Wellness Center"
+  description="Reserve your Essence Med Spa facial, injectable, or body ritual online in under two minutes."
+  canonical={canonical}
+  currentPath="/book"
 >
-  <section class="container mx-auto px-4 py-12">
-    <h1 class="text-3xl font-bold font-display">Book an Appointment</h1>
-    <p class="mt-2 text-neutral-600">Secure your spot with Essence MedSpa.</p>
-    <div class="my-8 min-h-[700px]" data-vagaro-business-id={businessId} data-vagaro-widget="booking" />
-    <script is:inline>
-      if (!document.getElementById("vagaro-widget")) {
-        const s = document.createElement("script");
-        s.id = "vagaro-widget";
-        s.src = "https://www.vagaro.com//path/to/official/widget.js"; // replace with official URL
-        s.async = true;
-        document.body.appendChild(s);
-      }
-    </script>
+  <section class="bg-white pb-14 pt-16">
+    <div class="container space-y-6">
+      <p class="text-xs uppercase tracking-[0.4em] text-brand/80">Book Online</p>
+      <h1 class="font-display text-4xl text-neutral-900">Reserve your next treatment.</h1>
+      <p class="max-w-2xl text-neutral-600">
+        Choose the service that fits your skin goals and lock in a time that works best for you. If you’re unsure which treatment to select, book a consultation and we’ll build the perfect plan together.
+      </p>
+      <div class="grid gap-8 lg:grid-cols-2">
+        <dl class="space-y-4 rounded-3xl border border-neutral-200 bg-neutral-50 p-8 text-sm text-neutral-700">
+          <div>
+            <dt class="font-semibold text-neutral-900">Call our concierge team</dt>
+            <dd class="mt-1">
+              <a href={business.phoneHref} class="text-brand">
+                {business.phone}
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-neutral-900">Visit the studio</dt>
+            <dd class="mt-1">
+              {business.address.street}, {business.address.suite}
+              <br />
+              {business.address.city}, {business.address.state} {business.address.postalCode}
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-neutral-900">Booking policies</dt>
+            <dd class="mt-1">
+              We request 24 hours notice for cancellations. A $50 fee applies to same-day changes so we can honor our practitioners’ time.
+            </dd>
+          </div>
+        </dl>
+        <div class="rounded-3xl border border-neutral-200 bg-white p-8 text-sm text-neutral-600">
+          <h2 class="text-lg font-semibold text-neutral-900">First-time guest?</h2>
+          <p class="mt-2">
+            Book the <strong>New Guest Facial Consultation</strong> to receive a complete skin analysis, product recommendations, and a mini glow treatment tailored to you.
+          </p>
+          <p class="mt-4">
+            Want to treat a friend? Call or email us to arrange a digital gift card that arrives instantly in their inbox.
+          </p>
+          <a href={`mailto:${business.email}`} class="mt-4 inline-flex items-center gap-2 font-semibold text-brand">
+            Email our team
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-neutral-50 py-16">
+    <div class="container">
+      <div class="rounded-3xl border border-neutral-200 bg-white p-4 shadow-soft">
+        {businessId ? (
+          <div class="min-h-[680px]" data-vagaro-widget="booking" data-vagaro-business-id={businessId} />
+        ) : (
+          <div class="flex flex-col items-center justify-center gap-3 py-16 text-center text-sm text-neutral-600">
+            <p class="text-lg font-semibold text-neutral-900">Set your Vagaro business ID.</p>
+            <p>Provide <code>PUBLIC_VAGARO_ID</code> in your environment variables to embed the live booking widget.</p>
+          </div>
+        )}
+      </div>
+      <script is:inline>
+        const widget = document.querySelector('[data-vagaro-widget]');
+        if (widget?.dataset?.vagaroBusinessId && !document.querySelector('#vagaro-booking-widget')) {
+          const script = document.createElement('script');
+          script.id = 'vagaro-booking-widget';
+          script.src = 'https://www.vagaro.com//resources/scripts/widgets/book-now-button.js';
+          script.async = true;
+          document.body.appendChild(script);
+        }
+      </script>
+    </div>
   </section>
 </BaseLayout>

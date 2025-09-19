@@ -1,0 +1,49 @@
+---
+import { business } from '../data/site';
+const year = new Date().getFullYear();
+const addressLines = [
+  business.address.street,
+  business.address.suite,
+  `${business.address.city}, ${business.address.state} ${business.address.postalCode}`
+].filter(Boolean);
+---
+<footer class="border-t border-neutral-200 bg-white">
+  <div class="container grid gap-10 py-12 md:grid-cols-[1.25fr_1fr_1fr]">
+    <div>
+      <p class="font-display text-xl text-neutral-900">{business.name}</p>
+      <p class="mt-3 max-w-sm text-sm text-neutral-600">{business.description}</p>
+    </div>
+    <div class="space-y-3 text-sm text-neutral-600">
+      <p class="font-semibold uppercase tracking-wide text-neutral-900">Visit</p>
+      <address class="not-italic space-y-1">
+        {addressLines.map((line) => (
+          <span>{line}</span>
+        ))}
+      </address>
+      <a class="inline-flex items-center gap-1 text-brand" href={business.phoneHref}>
+        {business.phone}
+      </a>
+      <a class="inline-flex items-center gap-1 text-brand" href={`mailto:${business.email}`}>
+        {business.email}
+      </a>
+    </div>
+    <div class="space-y-3 text-sm text-neutral-600">
+      <p class="font-semibold uppercase tracking-wide text-neutral-900">Hours</p>
+      <ul class="space-y-1">
+        {business.hours.map((line) => (
+          <li>{line}</li>
+        ))}
+      </ul>
+      <div class="mt-4 flex gap-4">
+        {business.socials.map((item) => (
+          <a class="text-brand underline decoration-1 underline-offset-4" href={item.href}>
+            {item.name}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-neutral-200 bg-neutral-50 py-4 text-center text-xs text-neutral-500">
+    © {year} Essence Med Spa and Wellness Center. All rights reserved.
+  </div>
+</footer>

@@ -1,59 +1,208 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { business, siteMeta } from '../../data/site';
+import { getServiceBySlug, services } from '../../data/services';
 
-export async function getStaticPaths() {
-  const items = await getCollection("services");
-  return items.map((entry) => ({
-    params: { slug: entry.slug },
-    props: { entry },
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { slug: service.slug }
   }));
 }
 
-const { entry } = Astro.props;
-const { Content } = await entry.render();
-const { title, price, duration, excerpt, image } = entry.data;
-const slug = entry.slug;
-const desc = excerpt ?? `Learn about ${title}`;
-const url = `https://essence-medspa.com/services/${slug}`;
----
-<BaseLayout title={`${title} | Essence MedSpa`} description={desc}>
-  <Fragment slot="head">
-    <link rel="canonical" href={url} />
-    <meta property="og:title" content={`${title} | Essence MedSpa`} />
-    <meta property="og:description" content={desc} />
-    <meta property="og:url" content={url} />
-    <script type="application/ld+json" is:inline>
-      {JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "Service",
-        name: title,
-        description: desc,
-        offers: {
-          "@type": "Offer",
-          priceCurrency: "USD",
-          price: price,
-          availability: "https://schema.org/InStock"
-        },
-        provider: { "@type": "LocalBusiness", name: "Essence MedSpa" }
-      })}
-    </script>
-  </Fragment>
+const { slug } = Astro.params;
+const service = getServiceBySlug(slug ?? '');
 
-  <section class="container mx-auto px-4 py-12">
-    <article class="grid gap-8 md:grid-cols-2">
-      {image && <img src={image} alt={title} class="rounded-xl" />}
-      <section>
-        <h1 class="text-3xl font-bold font-display">{title}</h1>
-        {excerpt && <p class="mt-2 text-neutral-600">{excerpt}</p>}
-        <p class="mt-4 text-xl font-medium">${price} · {duration} min</p>
-        <a href="/book" class="mt-6 inline-block rounded-lg bg-brand px-6 py-3 text-white hover:bg-brand-dark transition">Book Now</a>
-        <hr class="my-6" />
-        <div class="prose max-w-none">
-          <Content />
+if (!service) {
+  throw new Error(`Service not found for slug: ${slug}`);
+}
+
+const priceNumeric = Number(service.price.replace(/[^0-9.]/g, ''));
+const hasPriceValue = Number.isFinite(priceNumeric) && priceNumeric > 0;
+const canonical = `${siteMeta.siteUrl}/services/${service.slug}`;
+const description = service.excerpt ?? `Learn more about ${service.title} at ${business.name}.`;
+const streetAddress = [business.address.street, business.address.suite].filter(Boolean).join(', ');
+
+const structuredData: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: service.title,
+  description,
+  url: canonical,
+  provider: {
+    '@type': 'MedicalBusiness',
+    name: business.name,
+    telephone: business.phone,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress,
+      addressLocality: business.address.city,
+      addressRegion: business.address.state,
+      postalCode: business.address.postalCode
+    }
+  }
+};
+
+if (hasPriceValue) {
+  structuredData.offers = {
+    '@type': 'Offer',
+    priceCurrency: 'USD',
+    price: priceNumeric,
+    availability: 'https://schema.org/InStock'
+  };
+}
+
+const descriptionParagraphs = service.description
+  .split('\n')
+  .map((paragraph) => paragraph.trim())
+  .filter(Boolean);
+
+const formatPriceLabel = (price: string) => {
+  if (!price) return '';
+  return price.startsWith('$') || price.toLowerCase().startsWith('starting') ? price : `$${price}`;
+};
+---
+<BaseLayout
+  title={`${service.title} | Essence Med Spa and Wellness Center`}
+  description={description}
+  canonical={canonical}
+  structuredData={structuredData}
+  currentPath="/services"
+>
+  <article class="bg-white">
+    <section class="relative overflow-hidden">
+      <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#FCEEEE_0%,_#ffffff_60%)]"></div>
+      <div class="container grid gap-10 pb-12 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div class="space-y-5">
+          <span class="inline-flex rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-brand">
+            {service.category}
+            {service.isNew && <span class="ml-2 inline-flex items-center rounded-full bg-brand px-2 py-0.5 text-[10px] font-semibold uppercase text-white">New</span>}
+            {service.isMostRequested && (
+              <span class="ml-2 inline-flex items-center rounded-full bg-neutral-900 px-2 py-0.5 text-[10px] font-semibold uppercase text-white">
+                Most Requested
+              </span>
+            )}
+          </span>
+          <h1 class="font-display text-4xl text-neutral-900">{service.title}</h1>
+          {service.excerpt && <p class="max-w-xl text-neutral-600">{service.excerpt}</p>}
+          {(service.price || service.duration) && (
+            <div class="flex flex-wrap gap-4 text-sm text-neutral-700">
+              {service.price && (
+                <span class="rounded-full bg-white px-4 py-2 shadow-soft">{formatPriceLabel(service.price)}</span>
+              )}
+              {service.duration && (
+                <span class="rounded-full border border-neutral-200 px-4 py-2">{service.duration}</span>
+              )}
+            </div>
+          )}
+          <div class="flex flex-wrap gap-4 text-sm">
+            <a href="/book" class="rounded-xl bg-brand px-6 py-3 font-semibold text-white hover:bg-brand-dark">
+              Book now
+            </a>
+            <a href="#details" class="rounded-xl border border-neutral-200 px-6 py-3 font-semibold text-neutral-900">
+              Treatment details
+            </a>
+          </div>
         </div>
-      </section>
-    </article>
-    <a href="/book" class="md:hidden fixed bottom-4 right-4 rounded-full bg-brand px-5 py-3 text-white shadow-lg">Book</a>
-  </section>
+        <div class="relative">
+          <div class="absolute -top-6 -left-6 hidden h-28 w-28 rounded-full bg-brand/15 blur-2xl md:block"></div>
+          <div class="relative rounded-[28px] border border-brand/20 bg-white p-6 shadow-soft">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-neutral-500">
+              Why guests love it
+            </h2>
+            {service.highlights && service.highlights.length > 0 ? (
+              <ul class="mt-4 space-y-3 text-sm text-neutral-700">
+                {service.highlights.slice(0, 3).map((item) => (
+                  <li class="flex gap-3">
+                    <span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-brand"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="mt-4 text-sm text-neutral-700">
+                This service is crafted to deliver immediate relaxation and long-lasting results. Your therapist will customize every detail to your goals.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="details" class="border-t border-neutral-200 bg-white py-16">
+      <div class="container grid gap-12 lg:grid-cols-[0.7fr_1fr]">
+        <aside class="space-y-8 rounded-3xl border border-neutral-200 bg-neutral-50 p-8">
+          <div>
+            <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-neutral-500">Quick facts</h2>
+            <ul class="mt-4 space-y-3 text-sm text-neutral-700">
+              <li class="flex gap-3">
+                <span class="mt-1 h-1.5 w-1.5 rounded-full bg-brand"></span>
+                <span>
+                  Category: <span class="font-medium text-neutral-900">{service.category}</span>
+                </span>
+              </li>
+              {service.price && (
+                <li class="flex gap-3">
+                  <span class="mt-1 h-1.5 w-1.5 rounded-full bg-brand"></span>
+                  <span>
+                    Investment: <span class="font-medium text-neutral-900">{formatPriceLabel(service.price)}</span>
+                  </span>
+                </li>
+              )}
+              {service.duration && (
+                <li class="flex gap-3">
+                  <span class="mt-1 h-1.5 w-1.5 rounded-full bg-brand"></span>
+                  <span>
+                    Duration: <span class="font-medium text-neutral-900">{service.duration}</span>
+                  </span>
+                </li>
+              )}
+            </ul>
+          </div>
+          {service.highlights && service.highlights.length > 0 && (
+            <div>
+              <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-neutral-500">Highlights</h2>
+              <ul class="mt-4 space-y-3 text-sm text-neutral-700">
+                {service.highlights.map((item) => (
+                  <li class="flex gap-3">
+                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-brand"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div class="rounded-2xl border border-brand/20 bg-white p-6 text-sm text-neutral-700">
+            <p class="font-semibold text-neutral-900">First time here?</p>
+            <p class="mt-2">
+              Arrive 10 minutes early for a complimentary beverage and skin analysis. Our team will review your intake and personalize every protocol.
+            </p>
+          </div>
+        </aside>
+        <div class="prose prose-neutral max-w-none">
+          {descriptionParagraphs.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-neutral-50 py-14">
+      <div class="container flex flex-col gap-6 rounded-3xl border border-neutral-200 bg-white px-8 py-10 lg:flex-row lg:items-center lg:justify-between">
+        <div class="space-y-2">
+          <h2 class="text-xl font-semibold text-neutral-900">Ready for radiant skin?</h2>
+          <p class="text-sm text-neutral-600">
+            Book online in under two minutes or call our concierge team for guidance on pairing treatments.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3 text-sm">
+          <a href="/book" class="rounded-xl bg-brand px-6 py-3 font-semibold text-white hover:bg-brand-dark">
+            Reserve now
+          </a>
+          <a href={business.phoneHref} class="rounded-xl border border-neutral-200 px-6 py-3 font-semibold text-neutral-900">
+            Call {business.phone}
+          </a>
+        </div>
+      </div>
+    </section>
+  </article>
 </BaseLayout>

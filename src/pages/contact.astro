@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { business, siteMeta } from '../data/site';
+
+const canonical = `${siteMeta.siteUrl}/contact`;
+const faqs = [
+  {
+    question: 'Where should I park?',
+    answer: 'Street parking is available along Kinzua Avenue and the surrounding Edgebrook neighborhood. If you need assistance, give us a call before your visit.'
+  },
+  {
+    question: 'Do you accept walk-ins?',
+    answer: 'We operate by appointment so every guest receives adequate consultation time. Same-day openings will appear on the online booking calendar.'
+  },
+  {
+    question: 'How do I purchase a gift card?',
+    answer: 'Call our concierge team or email us and we will send a digital gift card with a personalized message.'
+  }
+];
+---
+<BaseLayout
+  title="Contact Essence Med Spa and Wellness Center | Chicago, IL"
+  description="Connect with Essence Med Spa and Wellness Center for appointments, concierge support, and gift card requests in Chicago's Edgebrook neighborhood."
+  canonical={canonical}
+  currentPath="/contact"
+>
+  <section class="bg-white pb-14 pt-16">
+    <div class="container grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+      <div class="space-y-6">
+        <p class="text-xs uppercase tracking-[0.4em] text-brand/80">Let's Connect</p>
+        <h1 class="font-display text-4xl text-neutral-900">Plan your next glow in Chicago.</h1>
+        <p class="text-neutral-600">
+          Call, email, or complete the inquiry form below. Our concierge team responds within one business day to coordinate appointments or answer your skincare questions.
+        </p>
+        <dl class="grid gap-6 text-sm text-neutral-700 sm:grid-cols-2">
+          <div>
+            <dt class="font-semibold text-neutral-900">Visit us</dt>
+            <dd class="mt-1 space-y-1">
+              <span class="block">{business.address.street}</span>
+              {business.address.suite && <span class="block">{business.address.suite}</span>}
+              <span class="block">{business.address.city}, {business.address.state} {business.address.postalCode}</span>
+            </dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-neutral-900">Call or email</dt>
+            <dd class="mt-1 space-y-1">
+              <a href={business.phoneHref} class="block text-brand">{business.phone}</a>
+              <a href={`mailto:${business.email}`} class="block text-brand">{business.email}</a>
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <form class="grid gap-4 rounded-3xl border border-neutral-200 bg-neutral-50 p-8 text-sm text-neutral-700" name="contact" method="post" data-netlify="true">
+        <input type="hidden" name="form-name" value="contact" />
+        <label class="flex flex-col gap-1">
+          <span class="font-semibold text-neutral-900">Full name</span>
+          <input
+            type="text"
+            name="name"
+            required
+            class="rounded-xl border border-neutral-300 bg-white px-4 py-3 focus:border-brand focus:outline-none"
+          />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="font-semibold text-neutral-900">Email address</span>
+          <input
+            type="email"
+            name="email"
+            required
+            class="rounded-xl border border-neutral-300 bg-white px-4 py-3 focus:border-brand focus:outline-none"
+          />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="font-semibold text-neutral-900">Phone number</span>
+          <input
+            type="tel"
+            name="phone"
+            class="rounded-xl border border-neutral-300 bg-white px-4 py-3 focus:border-brand focus:outline-none"
+          />
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="font-semibold text-neutral-900">How can we help?</span>
+          <textarea
+            name="message"
+            rows="5"
+            class="rounded-xl border border-neutral-300 bg-white px-4 py-3 focus:border-brand focus:outline-none"
+          ></textarea>
+        </label>
+        <button type="submit" class="mt-2 rounded-xl bg-brand px-6 py-3 font-semibold text-white hover:bg-brand-dark">
+          Submit inquiry
+        </button>
+        <p class="text-xs text-neutral-500">
+          Submitting this form does not confirm an appointment. Our concierge will follow up to finalize details.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <section class="bg-neutral-50 py-16">
+    <div class="container grid gap-10 lg:grid-cols-[0.6fr_1fr] lg:items-center">
+      <div class="space-y-3">
+        <h2 class="font-display text-3xl text-neutral-900">Good to know before you arrive.</h2>
+        <p class="text-neutral-600">
+          Allow time to find parking, complete your digital intake, and relax with herbal tea before your service begins.
+        </p>
+        <ul class="space-y-2 text-sm text-neutral-600">
+          <li>Street parking is commonly available along Kinzua Avenue and nearby cross streets.</li>
+          <li>Arrive makeup-free for facial appointments if possible.</li>
+          <li>Have a special request? Mention it in the form and we’ll prepare.</li>
+        </ul>
+      </div>
+      <dl class="grid gap-4 rounded-3xl border border-neutral-200 bg-white p-8 text-sm text-neutral-600">
+        {faqs.map((faq) => (
+          <div>
+            <dt class="text-sm font-semibold text-neutral-900">{faq.question}</dt>
+            <dd class="mt-2">{faq.answer}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="bg-white pb-16">
+    <div class="container overflow-hidden rounded-3xl border border-neutral-200 shadow-soft">
+      <iframe
+        title="Essence Med Spa and Wellness Center location map"
+        class="h-[420px] w-full border-0"
+        loading="lazy"
+        src="https://maps.google.com/maps?q=6413%20N%20Kinzua%20Ave%2C%20Chicago%2C%20IL%2060646&z=15&output=embed"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  </section>
+</BaseLayout>

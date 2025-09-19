@@ -1,46 +1,78 @@
-# Astro Starter Kit: Basics
+# Essence MedSpa Website
 
-```sh
-npm create astro@latest -- --template basics
+Essence MedSpa is an Astro + TailwindCSS build optimized for fast performance, clean content modelling, and strong on-page SEO. Services are managed with Astro Content Collections (MDX) so new treatments can be published with rich metadata in minutes.
+
+## Tech Stack
+- [Astro 5](https://astro.build)
+- [Tailwind CSS](https://tailwindcss.com) with custom theme tokens and typography plugin
+- [MDX Content Collections](https://docs.astro.build/en/guides/content-collections/) for service entries
+- Netlify-friendly enhancements (form handling, sitemap integration, robots.txt)
+
+## Project Structure
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
 ├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+│   ├── favicon.svg
+│   └── robots.txt
+├── src/
+│   ├── components/
+│   │   ├── SiteFooter.astro
+│   │   └── SiteHeader.astro
+│   ├── content/
+│   │   ├── config.ts
+│   │   └── services/*.mdx
+│   ├── data/
+│   │   └── site.ts
+│   ├── layouts/
+│   │   └── BaseLayout.astro
+│   ├── pages/
+│   │   ├── 404.astro
+│   │   ├── about.astro
+│   │   ├── book.astro
+│   │   ├── contact.astro
+│   │   ├── gallery.astro
+│   │   ├── index.astro
+│   │   └── services/
+│   │       ├── [slug].astro
+│   │       └── index.astro
+│   └── styles/
+│       └── global.css
+├── astro.config.mjs
+├── tailwind.config.cjs
+├── tsconfig.json
+├── package.json
+└── .env.example
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Getting Started
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Copy the environment example and add your Vagaro business ID:
+   ```bash
+   cp .env.example .env
+   # set PUBLIC_VAGARO_ID=your_business_id
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Build for production (Netlify-ready output in `dist/`):
+   ```bash
+   npm run build
+   ```
 
-## 🧞 Commands
+## Content Collections
+Service entries live in `src/content/services`. Each MDX file supports:
+- `title`, `slug`, `price`, `duration`, `excerpt`, `category`
+- `image`, `imageAlt`
+- Optional arrays: `benefits`, `inclusions`, `addOns`
+- Optional `featured: true` flag to promote services on the home page.
 
-All commands are run from the root of the project, from a terminal:
+## Deployment Notes
+- Update `astro.config.mjs` with the live domain (already set to `https://essence-medspa.com`).
+- Netlify forms: the contact form posts via Netlify’s form handling (`data-netlify="true"`).
+- Sitemap and robots are generated automatically via `@astrojs/sitemap` and the static `robots.txt` file.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Feel free to replace placeholder copy, team details, and imagery with real brand assets before launching.
