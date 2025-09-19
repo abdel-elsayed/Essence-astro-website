@@ -21,6 +21,8 @@ const {
   noIndex = false,
   currentPath = Astro.url.pathname
 } = Astro.props as Props;
+
+const defaultOgImage = `${siteMeta.siteUrl}/og-card.jpg`;
 ---
 <html lang="en" class="scroll-smooth">
   <head>
@@ -33,7 +35,13 @@ const {
     <meta property="og:site_name" content={business.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:image" content={defaultOgImage} />
+    <meta property="og:image:alt" content="Essence Med Spa day pass promotional card" />
     {canonical && <meta property="og:url" content={canonical} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={defaultOgImage} />
     <meta name="theme-color" content={siteMeta.brandColor} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
