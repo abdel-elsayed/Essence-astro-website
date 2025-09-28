@@ -1,34 +1,20 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteMeta } from '../data/site';
+import { assetImage } from '../data/assets';
 
 const canonical = `${siteMeta.siteUrl}/gallery`;
-const images = [
-  {
-    src: 'https://images.unsplash.com/photo-1556229010-aa3f7ff66c05?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Essence Med Spa lobby with seating area'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Treatment bed with warm lighting'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Shelves of curated skincare products'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1611944212129-29977ae1398c?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Calming facial treatment room'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1591017403286-a392ef81b7de?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Massage therapist preparing hot stones'
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1522335789204-0863df5d73eb?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Detail of spa retail display'
-  }
-];
+const galleryItems = [
+  { path: 'gallery/studio-tour/01-lobby.jpg', alt: 'Essence Med Spa lobby with seating area' },
+  { path: 'gallery/studio-tour/02-treatment-room.jpg', alt: 'Treatment bed with warm lighting' },
+  { path: 'gallery/studio-tour/03-retail-shelves.jpg', alt: 'Shelves of curated skincare products' },
+  { path: 'gallery/studio-tour/04-facial-suite.jpg', alt: 'Calming facial treatment room' },
+  { path: 'gallery/studio-tour/05-hot-stone-prep.jpg', alt: 'Massage therapist preparing hot stones' },
+  { path: 'gallery/studio-tour/06-retail-detail.jpg', alt: 'Detail of spa retail display' }
+].map((item) => ({
+  ...item,
+  asset: assetImage(item.path)
+}));
 ---
 <BaseLayout
   title="Essence Med Spa Gallery"
@@ -49,10 +35,15 @@ const images = [
   <section class="bg-neutral-50 pb-16">
     <div class="container">
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {images.map((image) => (
+        {galleryItems.map((item) => (
           <figure class="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-            <img src={image.src} alt={image.alt} class="h-64 w-full object-cover" loading="lazy" />
-            <figcaption class="p-4 text-sm text-neutral-600">{image.alt}</figcaption>
+            <img
+              src={item.asset.url}
+              alt={item.alt}
+              class="h-64 w-full object-cover"
+              loading="lazy"
+            />
+            <figcaption class="p-4 text-sm text-neutral-600">{item.alt}</figcaption>
           </figure>
         ))}
       </div>

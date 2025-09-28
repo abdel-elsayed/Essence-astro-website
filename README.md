@@ -53,6 +53,7 @@ Essence MedSpa is an Astro + TailwindCSS build optimized for fast performance, c
    ```bash
    cp .env.example .env
    # set PUBLIC_VAGARO_ID=your_business_id
+   # set PUBLIC_ASSET_CDN_BASE=https://cdn.jsdelivr.net/gh/<org-or-user>/essence-medspa-assets@main
    ```
 3. Run the development server:
    ```bash
@@ -71,6 +72,7 @@ Service entries live in `src/content/services`. Each MDX file supports:
 - Optional `featured: true` flag to promote services on the home page.
 
 ## Deployment Notes
+- Set `PUBLIC_ASSET_CDN_BASE` to the CDN URL for the external image repository so production builds pull remote assets.
 - Update `astro.config.mjs` with the live domain (already set to `https://essence-medspa.com`).
 - Netlify forms: the contact form posts via Netlify’s form handling (`data-netlify="true"`).
 - Sitemap and robots are generated automatically via `@astrojs/sitemap` and the static `robots.txt` file.
